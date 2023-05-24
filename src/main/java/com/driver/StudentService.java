@@ -3,40 +3,41 @@ package com.driver;
 import java.util.List;
 
 public class StudentService {
-    StudentRepository studentRepository=new StudentRepository();
+
+    StudentRepository sr = new StudentRepository();
     public void addStudent(Student student) {
-        studentRepository.addStudent(student);
+        sr.addStudent(student);
     }
 
     public void addTeacher(Teacher teacher) {
-        studentRepository.addTeacher(teacher);
-    }
-
-    public void addStudentTeacherPair(String student, String teacher) {
-        studentRepository.addStudentTeacherPair(student,teacher);
-    }
-
-    public Student getStudentByName(String name) {
-        return studentRepository.getStudentByName(name);
+        sr.addTeacher(teacher);
     }
 
     public Teacher getTeacherByName(String name) {
-        return studentRepository.getTeacherByName(name);
+        return sr.getTeacherByName(name);
+    }
+
+    public void addStudentTeacherPair(String student, String teacher) {
+        sr.addStudentTeacherPair(student,teacher);
+    }
+
+    public Student getStudentByName(String name) {
+        return sr.getStudentByName(name);
     }
 
     public List<String> getStudentsByTeacherName(String teacher) {
-        return studentRepository.getStudentsByTeacherName(teacher);
+        return sr.getStudentsByTeacherName(teacher);
     }
 
     public List<String> getAllStudents() {
-        return studentRepository.getAllStudents();
+        return sr.getAllStudents();
     }
 
     public void deleteTeacherByName(String teacher) {
-        studentRepository.deleteTeacherByName(teacher);
+        sr.deleteTeacherByName(teacher);
     }
 
     public void deleteAllTeachers() {
-        studentRepository.deleteAllTeachers();
+        sr.deleteAllTeachers();
     }
 }

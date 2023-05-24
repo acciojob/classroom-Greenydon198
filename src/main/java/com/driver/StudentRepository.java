@@ -5,71 +5,69 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StudentRepository {
-    private List<Student> studentList =new ArrayList<>();
-    private   List<Teacher> teacherList =new ArrayList<>();
 
-    private HashMap<Teacher,List<Student>> teacherWithStudentMap=new HashMap<>();
+    HashMap<String,Student> students;
+    HashMap<String,Teacher> teachers;
+    HashMap<String,ArrayList<String>> pair;
+
+    public StudentRepository(){
+        students = new HashMap<>();
+        teachers = new HashMap<>();
+        pair = new HashMap<>();
+    }
+
     public void addStudent(Student student) {
-        studentList.add(student);
+        students.put(student.getName(),student);
     }
 
     public void addTeacher(Teacher teacher) {
-        teacherList.add(teacher);
-    }
-
-    public void addStudentTeacherPair(String student, String teacher) {
-        Teacher tempTeacher=getTeacherByName(teacher);
-        Student student1=getStudentByName(student);
-        List<Student> tempList=teacherWithStudentMap.getOrDefault(tempTeacher, new ArrayList<Student>());
-        tempList.add(student1);
-        teacherWithStudentMap.put(tempTeacher,tempList);
-    }
-
-    public Student getStudentByName(String name) {
-        for(Student student:studentList){
-            if(student.getName().equals(name))return student;
-        }
-        return new Student();
+        teachers.put(teacher.getName(),teacher);
     }
 
     public Teacher getTeacherByName(String name) {
-        for (Teacher teacher:teacherList){
-            if(teacher.getName().equals(name))return teacher;
+        return teachers.get(name);
+    }
+
+    public void addStudentTeacherPair(String student, String teacher) {
+        if(teachers.containsKey(teacher) && students.containsKey(student)){
+            ArrayList<String> list = pair.getOrDefault(teacher,new ArrayList<>());
+            list.add(student);
+            pair.put(teacher,list);
         }
-        return new Teacher();
+    }
+
+    public Student getStudentByName(String name) {
+        return students.get(name);
     }
 
     public List<String> getStudentsByTeacherName(String teacher) {
-        List<String> allStudentByTeacher=new ArrayList<>();
-        Teacher teacher1=getTeacherByName(teacher);
-        List<Student> studentList=teacherWithStudentMap.getOrDefault(teacher1,new ArrayList<>());
-        for(Student student:studentList){
-            allStudentByTeacher.add(student.getName());
-        }
-        return allStudentByTeacher;
+        if(pair.containsKey(teacher))
+            return new ArrayList<>(pair.get(teacher));
+        else
+            return null;
     }
 
     public List<String> getAllStudents() {
-        List<String> allStudent=new ArrayList<>();
-        for (Student student:studentList){
-            allStudent.add(student.getName());
-        }
-        return allStudent;
+        return new ArrayList<>(students.keySet());
     }
 
     public void deleteTeacherByName(String teacher) {
-        Teacher teacher1=getTeacherByName(teacher);
-        List<Student> listOfRemoveStudent=teacherWithStudentMap.getOrDefault(teacher1,new ArrayList<>());
-        for(Student student:listOfRemoveStudent){
-            studentList.remove(student);
+        if(pair.containsKey(teacher)){
+            for(String student:pair.get(teacher)){
+                if(students.containsKey(student))
+                    students.remove(student);
+            }
+            pair.remove(teacher);
+            if(teachers.containsKey(teacher))teachers.remove(teacher);
         }
-        teacherWithStudentMap.remove(teacher1);
-        teacherList.remove(teacher1);
     }
 
     public void deleteAllTeachers() {
-        for(Teacher teacher: new ArrayList<>(teacherList)) deleteTeacherByName(teacher.getName());
-        teacherList.clear();
-        teacherWithStudentMap.clear();
+        ArrayList<String> temp = new ArrayList<>(pair.keySet());
+        for(String teacher:temp){
+            deleteTeacherByName(teacher);
+        }
+        pair = new HashMap<>();
+        teachers = new HashMap<>();
     }
 }
